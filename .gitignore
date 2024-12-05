@@ -1,0 +1,8 @@
+node_modules/
+.angular/
+.vscode/
+.idea/
+.gitattributes
+.api/.gitignore
+.target/
+.HELP.md
