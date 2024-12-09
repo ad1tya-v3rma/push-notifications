@@ -3,7 +3,6 @@ package com.push_notifications.api.configs;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.common.serialization.Deserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,6 +13,8 @@ import org.springframework.kafka.config.KafkaListenerContainerFactory;
 import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.*;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
+import org.springframework.kafka.support.serializer.JsonDeserializer;
+import org.springframework.kafka.support.serializer.JsonSerializer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +26,6 @@ public class KafkaConfig {
     @Bean
     public NewTopic notificationTopic()
     {
-        TopicBuilder.name("2e1").
         return TopicBuilder.name("notification").build();
     }
 
@@ -35,7 +35,7 @@ public class KafkaConfig {
         Map<String,Object> producerProps = new HashMap<>();
         producerProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServer);
         producerProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        producerProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+        producerProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
         return producerProps;
     }
 
@@ -45,32 +45,36 @@ public class KafkaConfig {
         Map<String,Object> consumerProps = new HashMap<>();
         consumerProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, kafkaServer);
         consumerProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        consumerProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        consumerProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
         return consumerProps;
     }
 
     @Bean
-    public ProducerFactory<String, String> producerFactory()
+    public ProducerFactory<String, Object> producerFactory()
     {
         return new DefaultKafkaProducerFactory<>(producerConfig());
     }
 
     @Bean
-    public ConsumerFactory<String, String> consumerFactory()
+    public ConsumerFactory<String, Object> consumerFactory()
     {
-        return new DefaultKafkaConsumerFactory<>(consumerConfig());
+        JsonDeserializer<Object> deserializer = new JsonDeserializer<>(Object.class);
+        deserializer.trustedPackages("*");
+        deserializer.dontRemoveTypeHeaders();
+        deserializer.setUseTypeHeaders(true);
+        return new DefaultKafkaConsumerFactory<>(consumerConfig(), new StringDeserializer(), deserializer);
     }
 
     @Bean
-    public KafkaTemplate<String, String> kafkaTemplate(ProducerFactory producerFactory)
+    public KafkaTemplate<String, Object> kafkaTemplate(ProducerFactory<String,Object> producerFactory)
     {
         return new KafkaTemplate<>(producerFactory);
     }
 
     @Bean
-    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String,String>> kafkaListenerContainerFactory(ConsumerFactory<String, String> consumerFactory)
+    public KafkaListenerContainerFactory<ConcurrentMessageListenerContainer<String,Object>> kafkaListenerContainerFactory(ConsumerFactory<String, Object> consumerFactory)
     {
-        ConcurrentKafkaListenerContainerFactory<String,String> containerFactory = new ConcurrentKafkaListenerContainerFactory<>();
+        ConcurrentKafkaListenerContainerFactory<String,Object> containerFactory = new ConcurrentKafkaListenerContainerFactory<>();
         containerFactory.setConsumerFactory(consumerFactory);
         return containerFactory;
     }
