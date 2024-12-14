@@ -1,5 +1,8 @@
-<h1>notification service at play</h1>
-<div *ngIf="notification">
-  <h1>New Notification</h1>
-  <p>{{ notification }}</p>
+<div class="notification-container" *ngIf=isVisible>
+  <div>
+    <h1>{{model?.headLine}}</h1>
+    <button class="close-btn" (click)="toggle()"><mat-icon>close</mat-icon></button>
+  </div>
+  <hr>
+  <p>{{model?.body}}</p>
 </div>

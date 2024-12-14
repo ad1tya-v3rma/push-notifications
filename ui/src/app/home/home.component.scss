@@ -1,0 +1,35 @@
+section {
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+.title-container {
+  height: 100%;
+  width: 100%;
+}
+
+.notification-panel {
+  float: right;
+  position: absolute;
+  top: 30px;
+  right: 30px;
+}
+p
+{
+  height: 100%;
+  width: 100%;
+}
+.title {
+  display: flex;
+  align-items: center;
+  background-color: white;
+  color: #f90505;
+  height: 600px;
+  padding: 10px;
+  width: fit-content;
+  mix-blend-mode: multiply;
+  font-size: 100px;
+  line-height: 100px;
+  font-weight: 800;
+}

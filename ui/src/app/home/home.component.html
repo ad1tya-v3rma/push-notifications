@@ -1,0 +1,13 @@
+<section>
+  <div class="title-container">
+    <div class="title">
+      A Push-Notifications demo project
+    </div>
+  </div>
+  <div class="notification-panel">
+    <div *ngFor="let notification of notifications">
+      <app-notification [model]="notification"></app-notification>
+    </div>
+  </div>
+</section>
+

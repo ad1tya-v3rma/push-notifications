@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import {NotificationService} from "./services/notification.service";
+import {OnInit} from "@angular/core";
 
 @Component({
   selector: 'app-root',
@@ -7,4 +9,12 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'ui';
+
+  constructor(private notifcationService : NotificationService) {
+  }
+
+  ngOnInit()
+  {
+
+  }
 }

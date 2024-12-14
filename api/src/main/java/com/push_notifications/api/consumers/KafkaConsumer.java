@@ -6,6 +6,8 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.http.WebSocket;
+
 @Component
 public class KafkaConsumer {
     private RestTemplate restTemplate;
